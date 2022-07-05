@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Grid, GridItem, Image, Box, Text, Stack } from '@chakra-ui/react'
-import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons'
+import { SearchIcon, ChevronDownIcon, ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons'
 import { Input, InputGroup, InputLeftAddon, Center, Flex, Spacer } from '@chakra-ui/react'
-import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
+import { Skeleton, SkeletonCircle, SkeletonText, Select } from '@chakra-ui/react'
 import {
     Modal,
     ModalOverlay,
@@ -37,6 +37,14 @@ const Card = () => {
     const [isLoaded, setIsLoaded] = useState(true)
     const [valueInput, setValueInput] = useState('');
     const [characterId, setCharacterId] = useState();
+    const [itensPerPage, setItensPerPage] = useState(8)
+    const [currentPage, setCurrentPage] = useState(0)
+    const speciesList = data.map(item => item.species);
+    const uniqueUFList = [...new Set(speciesList)];
+    const pages = Math.ceil(data.length / itensPerPage);
+    const startIndex = currentPage * itensPerPage;
+    const endIndex = startIndex + itensPerPage;
+    const currentItens = data.slice(startIndex, endIndex)
 
     useEffect(() => {
         setIsLoaded(true);
@@ -44,10 +52,14 @@ const Card = () => {
             api.get('/all.json')
                 .then(response => setData(response.data))
                 .catch(err => console.log(err))
-                setIsLoaded(false);
+            setIsLoaded(false);
         }, 3000);
         return () => clearTimeout(timer);
     }, []);
+
+    useEffect(() => {
+        setCurrentPage(0)
+    }, [itensPerPage])
 
     useEffect(() => {
         api.get(`/id/${characterId}.json`)
@@ -55,15 +67,12 @@ const Card = () => {
             .catch(err => console.log(err))
     }, [isOpen])
 
-    const speciesList = data.map(item => item.species);
-    const uniqueUFList = [...new Set(speciesList)];
-    let filter = data
-
     if (valueInput !== "") {
-        filter = data.filter((data) => data.name.toString().toLowerCase().startsWith(valueInput))
+        currentItens = data.filter((data) => data.name.toString().toLowerCase().startsWith(valueInput))
     }
+
     if (value !== "") {
-        filter = data.filter((data) => data.species == value)
+        currentItens = data.filter((data) => data.species == value)
     }
 
     return (
@@ -80,12 +89,12 @@ const Card = () => {
                     <Box>
                         <Menu>
                             <MenuButton as={Button} rightIcon={<ChevronDownIcon />} color="black">
-                                Espécie
+                                {value == "" ? 'Filtrar' : value}
                             </MenuButton>
                             <MenuList color="black" maxH={250} overflow={'auto'}>
                                 <MenuItem onClick={(e) => setValue("")}>Mostrar Todos</MenuItem>
                                 {uniqueUFList.map(info =>
-                                    <MenuItem onClick={(e) => setValue(info)}>{info}</MenuItem>
+                                    <MenuItem value={info} onClick={(e) => setValue(info)}>{info}</MenuItem>
                                 )}
                             </MenuList>
                         </Menu>
@@ -133,7 +142,7 @@ const Card = () => {
                 </Modal>
                 <Box marginTop={100} w='100%' p={4} color='white'>
                     <Grid templateColumns={{ md: 'repeat(4, 1fr)', base: 'repeat(2, 1fr)' }} gap={10}>
-                        {filter.map(info =>
+                        {currentItens.map(info =>
                             <Skeleton isLoaded={!isLoaded}>
                                 <GridItem cursor={'pointer'} onClick={(e) => setCharacterId(info.id)}>
                                     <Image src={info.image} boxSize={[200, 300]} borderRadius={5} onClick={onOpen} />
@@ -142,6 +151,16 @@ const Card = () => {
                             </Skeleton>
                         )}
                     </Grid>
+                </Box>
+                <Box margin={10} display={'flex'} alignItems={'center'} gap={3}>
+                    <Button disabled={currentPage == 0 ? true : false} variant='outline' color={'white'} size='md' onClick={(e) => setCurrentPage(currentPage - 1)}><ArrowLeftIcon /></Button>
+                    <Button disabled={currentItens.length < itensPerPage ? true : false} variant='outline' color={'white'} size='md' onClick={(e) => setCurrentPage(currentPage + 1)}><ArrowRightIcon /></Button>
+                    <Select size='sm' marginLeft={2} variant='flushed' value={itensPerPage} onChange={(e) => setItensPerPage(Number(e.target.value))}>
+                        <option value={4}>4</option>
+                        <option value={8}>8</option>
+                        <option value={12}>12</option>
+                        <option value={16}>16</option>
+                    </Select>
                 </Box>
 
             </Center>
