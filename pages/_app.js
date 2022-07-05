@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }) {
     styles: {
       global: (props) => ({
         body: {
-          bg: 'black'
+          bg: 'black',
         }
       })
     },

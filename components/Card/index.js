@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Grid, GridItem, Image, Box, Text, Stack } from '@chakra-ui/react'
 import { SearchIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import { Input, InputGroup, InputLeftAddon, Center, Flex, Spacer } from '@chakra-ui/react'
+import { Skeleton, SkeletonCircle, SkeletonText } from '@chakra-ui/react'
 import {
     Modal,
     ModalOverlay,
@@ -33,16 +34,20 @@ const Card = () => {
     const [data, setData] = useState([])
     const [character, setCharacter] = useState([])
     const [value, setValue] = useState('');
+    const [isLoaded, setIsLoaded] = useState(true)
     const [valueInput, setValueInput] = useState('');
     const [characterId, setCharacterId] = useState();
 
     useEffect(() => {
-        setTimeout(() => {
+        setIsLoaded(true);
+        const timer = setTimeout(() => {
             api.get('/all.json')
                 .then(response => setData(response.data))
                 .catch(err => console.log(err))
-        }, 500)
-    }, [])
+                setIsLoaded(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, []);
 
     useEffect(() => {
         api.get(`/id/${characterId}.json`)
@@ -66,7 +71,7 @@ const Card = () => {
             <Center display={"flex"} flexDirection={'column'}>
                 <Flex flexDirection={'row'} alignItems={'end'} gap={2}>
                     <Box>
-                        <InputGroup marginTop={10} w={[200,300, 400, 500]}>
+                        <InputGroup marginTop={10} w={[200, 300, 400, 500, 700]}>
                             <InputLeftAddon children={<SearchIcon w={6} color="black" />} />
                             <Input type='text' placeholder='Search Character' onChange={(e) => setValueInput(e.target.value)} />
                         </InputGroup>
@@ -77,7 +82,7 @@ const Card = () => {
                             <MenuButton as={Button} rightIcon={<ChevronDownIcon />} color="black">
                                 Espécie
                             </MenuButton>
-                            <MenuList color="black" maxH={200} overflow={'auto'}>
+                            <MenuList color="black" maxH={250} overflow={'auto'}>
                                 <MenuItem onClick={(e) => setValue("")}>Mostrar Todos</MenuItem>
                                 {uniqueUFList.map(info =>
                                     <MenuItem onClick={(e) => setValue(info)}>{info}</MenuItem>
@@ -129,10 +134,12 @@ const Card = () => {
                 <Box marginTop={100} w='100%' p={4} color='white'>
                     <Grid templateColumns={{ md: 'repeat(4, 1fr)', base: 'repeat(2, 1fr)' }} gap={10}>
                         {filter.map(info =>
-                            <GridItem cursor={'pointer'} onClick={(e) => setCharacterId(info.id)}>
-                                <Image src={info.image} boxSize={[200,300]} borderRadius={5} onClick={onOpen} />
-                                <Text fontSize='lg' marginTop={5}>{info.name}</Text>
-                            </GridItem>
+                            <Skeleton isLoaded={!isLoaded}>
+                                <GridItem cursor={'pointer'} onClick={(e) => setCharacterId(info.id)}>
+                                    <Image src={info.image} boxSize={[200, 300]} borderRadius={5} onClick={onOpen} />
+                                    <Text fontSize='lg' marginTop={5}>{info.name}</Text>
+                                </GridItem>
+                            </Skeleton>
                         )}
                     </Grid>
                 </Box>
