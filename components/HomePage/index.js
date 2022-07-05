@@ -7,7 +7,7 @@ import { Container } from "@chakra-ui/react";
 const HomePage = () => {
     return (
         <>
-            <Container maxW='7xl' color='white' minWidth={'500px'}>
+            <Container maxW='7xl' color='white'>
                 <Center marginTop={100} display={"flex"} flexDirection={'column'} >
                     <Image
                         src={'/logo.png'}
