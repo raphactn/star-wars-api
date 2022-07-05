@@ -81,14 +81,14 @@ const Card = () => {
                 <Flex flexDirection={'row'} alignItems={'end'} gap={2}>
                     <Box>
                         <InputGroup marginTop={10} w={[200, 300, 400, 500, 700]}>
-                            <InputLeftAddon children={<SearchIcon w={6} color="black" />} />
-                            <Input type='text' placeholder='Search Character' onChange={(e) => setValueInput(e.target.value)} />
+                            <InputLeftAddon children={<SearchIcon w={5} color="black" />} />
+                            <Input type='text' placeholder='Search for characters' onChange={(e) => setValueInput(e.target.value)} />
                         </InputGroup>
                     </Box>
                     <Spacer />
                     <Box>
                         <Menu>
-                            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} color="black">
+                            <MenuButton variant='outline' as={Button} rightIcon={<ChevronDownIcon />}>
                                 {value == "" ? 'Filtrar' : value}
                             </MenuButton>
                             <MenuList color="black" maxH={250} overflow={'auto'}>
@@ -103,7 +103,7 @@ const Card = () => {
                 <Modal isOpen={isOpen} onClose={onClose} isCentered>
                     <ModalOverlay />
                     <ModalContent>
-                        <ModalHeader bg={'#ecc94b'}>{character.name}</ModalHeader>
+                        <ModalHeader bg={'#dbaa0b'}>{character.name}</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
                             <Box boxSize='150px' marginBottom={10} marginLeft={'auto'} marginRight={'auto'}>
@@ -141,11 +141,11 @@ const Card = () => {
                     </ModalContent>
                 </Modal>
                 <Box marginTop={100} w='100%' p={4} color='white'>
-                    <Grid templateColumns={{ md: 'repeat(4, 1fr)', base: 'repeat(2, 1fr)' }} gap={10}>
+                    <Grid templateColumns={{ md: 'repeat(4, 1fr)', base: 'repeat(2, 1fr)' }} gap={[5,10]}>
                         {currentItens.map(info =>
                             <Skeleton isLoaded={!isLoaded}>
                                 <GridItem cursor={'pointer'} onClick={(e) => setCharacterId(info.id)}>
-                                    <Image src={info.image} boxSize={[200, 300]} borderRadius={5} onClick={onOpen} />
+                                    <Image src={info.image} borderBottom={'6px solid #dbaa0b'} boxSize={[200, 300]} borderRadius={5} onClick={onOpen} />
                                     <Text fontSize='lg' marginTop={5}>{info.name}</Text>
                                 </GridItem>
                             </Skeleton>
