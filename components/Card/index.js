@@ -140,7 +140,7 @@ const Card = () => {
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
-                <Box marginTop={100} w='100%' p={4} color='white'>
+                <Box marginTop={[50,70]} w='100%' p={4} color='white'>
                     <Grid templateColumns={{ md: 'repeat(4, 1fr)', base: 'repeat(2, 1fr)' }} gap={[5,10]}>
                         {currentItens.map(info =>
                             <Skeleton isLoaded={!isLoaded}>
