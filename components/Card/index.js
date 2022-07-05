@@ -152,7 +152,8 @@ const Card = () => {
                         )}
                     </Grid>
                 </Box>
-                <Box margin={10} display={'flex'} alignItems={'center'} gap={3}>
+                <Box marginTop={10}><Text>{currentPage + 1} de {pages}</Text></Box>
+                <Box margin={5} display={'flex'} alignItems={'center'} gap={3}>
                     <Button disabled={currentPage == 0 ? true : false} variant='outline' color={'white'} size='md' onClick={(e) => setCurrentPage(currentPage - 1)}><ArrowLeftIcon /></Button>
                     <Button disabled={currentItens.length < itensPerPage ? true : false} variant='outline' color={'white'} size='md' onClick={(e) => setCurrentPage(currentPage + 1)}><ArrowRightIcon /></Button>
                     <Select size='sm' marginLeft={2} variant='flushed' value={itensPerPage} onChange={(e) => setItensPerPage(Number(e.target.value))}>
