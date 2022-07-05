@@ -24,10 +24,6 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    MenuItemOption,
-    MenuGroup,
-    MenuOptionGroup,
-    MenuDivider,
 } from '@chakra-ui/react'
 import api from '../../pages/api/main'
 import { useDisclosure } from '@chakra-ui/react'
@@ -37,6 +33,7 @@ const Card = () => {
     const [data, setData] = useState([])
     const [character, setCharacter] = useState([])
     const [value, setValue] = useState('');
+    const [valueInput, setValueInput] = useState('');
     const [characterId, setCharacterId] = useState();
 
     useEffect(() => {
@@ -55,22 +52,23 @@ const Card = () => {
 
     const speciesList = data.map(item => item.species);
     const uniqueUFList = [...new Set(speciesList)];
+    let filter = data
 
-    let filter = ""
+    if (valueInput !== "") {
+        filter = data.filter((data) => data.name.toString().toLowerCase().startsWith(valueInput))
+    }
     if (value !== "") {
-        filter = data.filter((data) => data.species == value);
-    } else {
-        filter = data
+        filter = data.filter((data) => data.species == value)
     }
 
     return (
         <>
-            <Center display={"flex"} flexDirection={'column'}>
+            <Center display={"flex"} flexDirection={'column'} minWidth={'500px'}>
                 <Flex flexDirection={'row'} alignItems={'end'} gap={2}>
                     <Box>
-                        <InputGroup marginTop={10} width='md'>
+                        <InputGroup marginTop={10} w={[300, 400, 500]}>
                             <InputLeftAddon children={<SearchIcon w={6} color="black" />} />
-                            <Input type='text' placeholder='Search Character' onChange={(e) => setValue(e.target.value)} />
+                            <Input type='text' placeholder='Search Character' onChange={(e) => setValueInput(e.target.value)} />
                         </InputGroup>
                     </Box>
                     <Spacer />
@@ -88,14 +86,15 @@ const Card = () => {
                         </Menu>
                     </Box>
                 </Flex>
-
-
                 <Modal isOpen={isOpen} onClose={onClose} isCentered>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader bg={'#ecc94b'}>{character.name}</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
+                            <Box boxSize='150px' marginBottom={10} marginLeft={'auto'} marginRight={'auto'}>
+                                <Image src={character.image} borderRadius={5}></Image>
+                            </Box>
                             <Stack spacing={1.5}>
                                 <Text fontSize='lg' marginTop={5}><b>Gênero:</b> {character.gender}</Text>
                                 <Text fontSize='lg' marginTop={5}><b>Espécie:</b> {character.species}</Text>
@@ -128,7 +127,7 @@ const Card = () => {
                     </ModalContent>
                 </Modal>
                 <Box marginTop={100} w='100%' p={4} color='white'>
-                    <Grid templateColumns={{ md: 'repeat(4, 1fr)', sm: 'repeat(2, 1fr)' }} gap={10}>
+                    <Grid templateColumns={{ md: 'repeat(4, 1fr)', base: 'repeat(2, 1fr)' }} gap={10}>
                         {filter.map(info =>
                             <GridItem cursor={'pointer'} onClick={(e) => setCharacterId(info.id)}>
                                 <Image src={info.image} boxSize='250px' borderRadius={5} onClick={onOpen} />
